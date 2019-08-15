@@ -1282,10 +1282,10 @@ runStatLearn <- function(genphen.data,
   j <- NULL
   if(method == "rf") {
     cas <- (foreach(j = 1:ncol(genphen.data$X),
-                    .export = c("getHdi", "getKappa"),
-                    .packages = c("ranger")) %dopar% {
+                    .export = c("getHdi", "getKappa")) %dopar% {
               # Reset the library paths
               .libPaths(libs)
+              print(libs)
               runRf(X = as.matrix(genphen.data$X[, j]),
                     Y = genphen.data$Y,
                     cv.fold = cv.fold,
@@ -1298,8 +1298,7 @@ runStatLearn <- function(genphen.data,
   }
   else if(method == "svm") {
     cas <- (foreach(j = 1:ncol(genphen.data$X),
-                    .export = c("getHdi", "getKappa"),
-                    .packages = c("e1071")) %dopar% {
+                    .export = c("getHdi", "getKappa")) %dopar% {
               # Reset the library paths
               .libPaths(libs)
               runSvm(X = as.matrix(genphen.data$X[, j]),
