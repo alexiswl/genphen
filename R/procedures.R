@@ -1272,7 +1272,9 @@ runStatLearn <- function(genphen.data,
                  ca.list = ca.list,
                  kappa.list = kappa.list))
   }
-  
+
+  # Set library paths and pass into foreach
+  libs <- .libPaths()
   
   # multicore classification
   cl <- parallel::makeCluster(cores)
@@ -1281,7 +1283,9 @@ runStatLearn <- function(genphen.data,
   if(method == "rf") {
     cas <- (foreach(j = 1:ncol(genphen.data$X),
                     .export = c("getHdi", "getKappa"),
-                    .packages = c("ranger", "doParallel")) %dopar%
+                    .packages = c("ranger")) %dopar%
+              # Reset the library paths
+              .libPaths(libs)
               runRf(X = as.matrix(genphen.data$X[, j]),
                     Y = genphen.data$Y,
                     cv.fold = cv.fold,
@@ -1293,7 +1297,9 @@ runStatLearn <- function(genphen.data,
   else if(method == "svm") {
     cas <- (foreach(j = 1:ncol(genphen.data$X),
                     .export = c("getHdi", "getKappa"),
-                    .packages = c("e1071", "doParallel")) %dopar%
+                    .packages = c("e1071")) %dopar%
+              # Reset the library paths
+              .libPaths(libs)
               runSvm(X = as.matrix(genphen.data$X[, j]),
                      Y = genphen.data$Y,
                      cv.fold = cv.fold,
