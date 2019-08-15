@@ -1283,7 +1283,7 @@ runStatLearn <- function(genphen.data,
   if(method == "rf") {
     cas <- (foreach(j = 1:ncol(genphen.data$X),
                     .export = c("getHdi", "getKappa"),
-                    .packages = c("ranger")) %dopar%
+                    .packages = c("ranger")) %dopar% {
               # Reset the library paths
               .libPaths(libs)
               runRf(X = as.matrix(genphen.data$X[, j]),
@@ -1292,12 +1292,14 @@ runStatLearn <- function(genphen.data,
                     cv.steps = cv.steps,
                     hdi.level = hdi.level,
                     ntree = ntree,
-                    site = j))
+                    site = j)
+              }
+            )
   }
   else if(method == "svm") {
     cas <- (foreach(j = 1:ncol(genphen.data$X),
                     .export = c("getHdi", "getKappa"),
-                    .packages = c("e1071")) %dopar%
+                    .packages = c("e1071")) %dopar% {
               # Reset the library paths
               .libPaths(libs)
               runSvm(X = as.matrix(genphen.data$X[, j]),
@@ -1305,7 +1307,9 @@ runStatLearn <- function(genphen.data,
                      cv.fold = cv.fold,
                      cv.steps = cv.steps,
                      hdi.level = hdi.level,
-                     site = j))
+                     site = j)
+              }
+            )
   }
   # stop cluster
   parallel::stopCluster(cl = cl)
